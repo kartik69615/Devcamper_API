@@ -1,5 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
+// const logger = require('./middleware/logger'); 
+const morgan = require('morgan');
 
 
 // Route files
@@ -10,15 +12,13 @@ dotenv.config({ path: './config/config.env' });
 
 const app = express();
 
-const logger = (req, res, next) => {
-  console.log(`${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`);
-  next();
-};
-
-// Middleware
-app.use(logger);
 
 
+// Dev logging middleware
+// app.use(logger); //this is the custom logger middleware
+if(process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev')); //this is the morgan logger middleware
+}
 
 
 
