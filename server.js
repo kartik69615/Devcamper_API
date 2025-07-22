@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 // const logger = require('./middleware/logger'); 
 const morgan = require('morgan');
 const colors = require('colors');
+const errorHandler = require('./middleware/error'); // Assuming you have an error handler middleware
 const connectDB = require('./config/db');
 
 // Load environment variables from config.env
@@ -30,6 +31,11 @@ if(process.env.NODE_ENV === 'development') {
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
+// Error handling middleware : Must be after all bootcamps routes
+app.use(errorHandler);
+
+
+
 
 const PORT = process.env.PORT || 5000;
 
