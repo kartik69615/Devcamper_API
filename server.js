@@ -1,6 +1,5 @@
 const express = require('express');
 const dotenv = require('dotenv');
-// const logger = require('./middleware/logger'); 
 const morgan = require('morgan');
 const colors = require('colors');
 const errorHandler = require('./middleware/error'); // Assuming you have an error handler middleware
@@ -23,7 +22,6 @@ app.use(express.json()); // Parse JSON bodies
 
 
 // Dev logging middleware
-// app.use(logger); //this is the custom logger middleware
 if(process.env.NODE_ENV === 'development') {
   app.use(morgan('dev')); //this is the morgan logger middleware
 }
@@ -31,10 +29,10 @@ if(process.env.NODE_ENV === 'development') {
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
+
+
 // Error handling middleware : Must be after all bootcamps routes
 app.use(errorHandler);
-
-
 
 
 const PORT = process.env.PORT || 5000;

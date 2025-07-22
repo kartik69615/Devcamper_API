@@ -1,32 +1,25 @@
 //here we write methods(functionality) which will be used in bootcamps routes
 
 const ErrorResponse = require('../utils/errorResponse'); // Custom error response class
+const asyncHandler = require('../middleware/async'); // Custom middleware for error handling
 const Bootcamp = require('../models/Bootcamps');
 
 //@desc    Get all bootcamps
 //@route   GET /api/v1/bootcamps
 //@access  Public(means anyone can access this route)
-exports.getBootcamps = async (req, res, next) => {
-    try {
+exports.getBootcamps = asyncHandler(async (req, res, next) => {
         const bootcamps = await Bootcamp.find();
         res.status(200).json({
             success: true,
             count: bootcamps.length,
             data: bootcamps
         });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: "Error fetching bootcamps"
-        });
-    }
-}
+})
 
 //@desc    Get single bootcamps
 //@route   GET /api/v1/bootcamps/:id
 //@access  Public
-exports.getBootcamp = async (req, res, next) => {
-    try {
+exports.getBootcamp = asyncHandler(async (req, res, next) => {
         const bootcamp = await Bootcamp.findById(req.params.id);
         if (!bootcamp) {
             return next(new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404));
@@ -35,96 +28,57 @@ exports.getBootcamp = async (req, res, next) => {
             success: true,
             data: bootcamp
         });
-    } catch (error) {
-        next(error); // Pass the error to the error handling middleware
-    }
-}
+})
 
 
 //@desc    Create new bootcamp
 //@route   POST /api/v1/bootcamps
 //@access  Private
-exports.createBootcamps = async (req, res, next) => {
-    try {
+exports.createBootcamps = asyncHandler(async (req, res, next) => {
         const bootcamp = await Bootcamp.create(req.body);
         res.status(201).json({
             success: true,
             data: bootcamp
         });
 
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: "duplicate creation of bootcamp not allowed"
-        });
-    }
-
     /* Theory : 
          We have made this function async because moogose create method returns a promise.
     */
-
-
-    // --- IGNORE ---
-    // console.log(req.body);
-    // res.status(200).json({
-    //     success: true,
-    //     message: 'Create new bootcamp'
-    // });
-}
+})
 
 
 //@desc    Update bootcamp with ID
 //@route   PUT /api/v1/bootcamps/:id
 //@access  Private
-exports.updateBootcamps = async (req, res, next) => {
-    try {
+exports.updateBootcamps = asyncHandler(async (req, res, next) => {
         const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
 
         if (!bootcamp) {
-            return res.status(404).json({
-                success: false,
-                error: `Bootcamp not found with ID ${req.params.id}`
-            });
+            return next(new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404));
         }
 
         res.status(200).json({
             success: true,
             data: bootcamp
         });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: "Error updating bootcamp"
-        });
-    }
-}
+})
 
 
 //@desc    Delete bootcamp
 //@route   DELETE /api/v1/bootcamps/:id
 //@access  Private
-exports.deleteBootcamps = async (req, res, next) => {
-    try {
+exports.deleteBootcamps = asyncHandler(async (req, res, next) => {
         const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
 
         if (!bootcamp) {
-            return res.status(404).json({
-                success: false,
-                error: `Bootcamp not found with ID ${req.params.id}`
-            });
+            return next(new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404));
         }
 
         res.status(200).json({
             success: true,
             data: {}
         });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: "Error deleting bootcamp"
-        });
-    }
-}
+})
